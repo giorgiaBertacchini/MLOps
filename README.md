@@ -613,6 +613,57 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
 At this point I was able to run the two Kedro pipelines, built in sequence, and I obtained a trained and ready-to-use Machine Learning model.
 
+Kedro is enable to create `session_store.db` SQLiteStore file in `data/`. To do this, set up the session store in the `src/kedro_ml/settings.py`:
+``` python
+from kedro_viz.integrations.kedro.sqlite_store import SQLiteStore
+from pathlib import Path
+
+SESSION_STORE_CLASS = SQLiteStore
+SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
+```
+
+***GitHub Actions***
+
+*To implement a Continuous Integration, I write the workflows with GitHub Actions. In `.github/workflows/ci.yaml`:*
+``` yaml
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r src/requirements.txt
+        
+    - name: Run Kedro Pipeline
+      env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        kedro run
+                
+    - name: Create CML report - metrics
+      env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |        
+        echo "## Data metrics" > report.md
+        cat "data/09_tracking/metrics.json/$( cat data/last_version.txt )/metrics.json" >> report.md   
+        cml-send-comment report.md
+               
+    - name: Create CML report - Columns
+      env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: | 
+        echo "## Columns" > report.md
+        cat "data/09_tracking/activities_columns.json/$( cat data/last_version.txt )/activities_columns.json" >> report.md   
+        cml-send-comment report.md
+        
+    - name: Create CML report - plots
+      env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |        
+        echo "## Data viz" > report.md
+        cml-publish data/08_reporting/feature_importance.png --md >> report.md
+        cml-publish data/08_reporting/residuals.png --md >> report.md        
+        cml-send-comment report.md
+```
+So to each commit it is run from the `Pull request` that show the results and plots.
+
 ## DP Step 05
 
 To keep track of all the machine learning models built, I installed [MLflow](https://mlflow.org/docs/latest/index.html).
