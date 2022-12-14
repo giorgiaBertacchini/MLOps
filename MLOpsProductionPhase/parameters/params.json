@@ -1,0 +1,21 @@
+{
+    "file_name_request_data": "request_data.csv",
+    "file_name_training_data": "DATA.csv",
+    "file_name_request_data_clean": "request_data_clean.csv",
+    "file_name_training_data_clean": "training_data_clean.csv",
+    "numerical_features_names": [
+        "Distance (km)",
+        "Average Speed (km/h)" ,
+        "Calories Burned",
+        "Climb (m)",
+        "Average Heart rate (tpm)"
+    ],
+    "window_size": 500,
+    "monitors_name": [
+        "cat_target_drift",
+        "data_drift", 
+        "data_quality", 
+        "num_target_drift",
+        "regression_performance"
+    ]
+}
