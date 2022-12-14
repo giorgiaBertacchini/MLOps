@@ -662,7 +662,11 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
         cml-publish data/08_reporting/residuals.png --md >> report.md        
         cml-send-comment report.md
 ```
-So to each commit it is run from the `Pull request` that show the results and plots.
+*To each commit it is run from the `Pull request` that show the results and plots. An example of a success pull request:*
+
+<div align="center">
+  <img width="550" alt="dev schema" src="https://github.com/giorgiaBertacchini/MLOps/blob/main/img_readme/githubActions.png">
+</div>
 
 ## DP Step 05
 
