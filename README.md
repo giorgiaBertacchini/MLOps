@@ -731,31 +731,33 @@ entry_points:
 ```
 
 To run MLflow, you need to these configuration:
-**Before activate conda environment**
-Need Python version 3.7. Using conda:
-```
-conda create -n env_name python=3.7
-```
-```
-conda activate env_name
-```
-**To run MLflow project**
-You can run mlflow project with:
-```
-mlflow run . --experiment-name activities-example
-```
-To run mlflow project in Windows, you can run mlflow project with:
-```
-mlflow run . --experiment-name activities-example --no-conda
-```
 
-**To vizualize MLflow project**
-From the MLflow interface we can now see all the experiments done.
-You can run ui as follows:
-```
-mlflow ui
-```
-To see the mlflow ui go to the `270.0.0.1:5000` browser page.
+- **Before activate conda environment** 
+
+  Need Python version 3.7. Using conda:
+  ```
+  conda create -n env_name python=3.7
+  ```
+  ```
+  conda activate env_name
+  ```
+
+- **To run MLflow project** 
+  ```
+  mlflow run . --experiment-name activities-example
+  ```
+- **To run mlflow project in Windows**
+  ```
+  mlflow run . --experiment-name activities-example --no-conda
+  ```
+
+- **To vizualize MLflow project** 
+
+  From the MLflow interface we can now see all the experiments done. You can run ui as follows:
+  ```
+  mlflow ui
+  ```
+  To see the mlflow ui go to the `270.0.0.1:5000` browser page.
 
 ## DP Step 06
 
