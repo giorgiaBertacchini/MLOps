@@ -361,6 +361,7 @@ pip install -U scikit-learn
 I started from the previously manipulated dataset, which is always divided by it into the three validation, testing and training datasets. Related to this, I filled a Kedro file of parameters with hyperparameters used by the sk-learn methods.
 
 **Pipeline Model Engineering**
+
 Write `src/kedro_ml/pipelines/data_science/nodes.py` with help of scikit-learn:
 
 ``` python
@@ -774,6 +775,7 @@ BentoML stores all packaged model files under the `~/bentoml/repository/{service
 I then imported the model into BentoML through one of its explicit methods, and created a service that uses that model. 
 
 **Import the model**
+
 To save the model is used to help MLflow, included in BentoML module, so update `src/pipeline/data_science/nodes.py` file with:
 ``` python
 import bentoml
@@ -783,6 +785,7 @@ bentoml.mlflow.import_model("my_model", model_uri= os.path.join(os.getcwd(), 'my
 All imported model version are saved in the BentoML folder `my_model/`.
 
 **Prediction Service**
+
 To implement the service, in `service.py` file:
 ``` python
 def predict(input_data: pd.DataFrame):
@@ -820,6 +823,7 @@ docker:
 ```
 
 **BentoML Commands**
+
 To see all bento models:
 ```
 bentoml models list
@@ -850,6 +854,7 @@ Sending the command  BentoML serve, turns on the service.
 Uou can open a web page `127.0.0.1:3000` to have a model serving.
 
 **Deploy**
+
 The three most common deployment options with BentoML are:
 * 🐳 Generate container images from Bento for custom docker deployment
 * 🦄️ Yatai: Model Deployment at scale on Kubernetes
@@ -907,6 +912,7 @@ kedro docker run --image <image-name>
 ```
 
 ## DP Step 08
+
 To simplify the execution I wrote a Python script (`run.py`) that answers to command lines in order to interact with pipeline and all steps. It makes it easier to fulfill tasks, such as opening tool GUI, creating a new model and its bento (with a unique TAG), and updating dataset. The available command lines are:
 
 ![This is an image](https://github.com/giorgiaBertacchini/MLOps/blob/main/img_readme/run.png)
@@ -1032,6 +1038,7 @@ pip install evidently
 To start I write `scripts/monitoring.py` file:
 
 **Importing**
+
 ``` python
 from evidently.report import Report
 from evidently.metric_preset import DataDrift, NumTargetDrift
@@ -1042,6 +1049,7 @@ from evidently.tests import *
 ```
 
 **Data Stability**
+
 ``` python
 def data_stability_test(reference: pd.DataFrame, current: pd.DataFrame):
     logging.info("Data stability test. Test suite.")
@@ -1054,6 +1062,7 @@ def data_stability_test(reference: pd.DataFrame, current: pd.DataFrame):
 ```
 
 **Report**
+
 ``` python
 def drift_report(reference: pd.DataFrame, current: pd.DataFrame):
     logging.info("DataDrift and NumTargetDrift. Drift report.")
@@ -1065,6 +1074,7 @@ def drift_report(reference: pd.DataFrame, current: pd.DataFrame):
 ```
 
 **Test Suite**
+
 ``` python
 def data_tests(reference: pd.DataFrame, current: pd.DataFrame):
     logging.info("DataDrift and NumTargetDrift. Drift report.")
@@ -1090,6 +1100,7 @@ Example of created html pages:
 ![This is an image](https://github.com/giorgiaBertacchini/MLOps/blob/main/img_readme/report_html.png)
 
 ## PP Step 03
+
 To have real-time monitoring of the model and services I need the Grafana tool. I noticed that there is an integration of Evidently with Grafana and Prometheus, but still in development, so I started from this integration project ([Real-time ML monitoring with Evidently and Grafana](https://github.com/evidentlyai/evidently/tree/main/examples/integrations/grafana_monitoring_service))available at the official Evidently documentation, by adapting it to my experience.
 
 <div align="center">
@@ -1223,6 +1234,7 @@ def main(force: bool):
 A key element for monitoring is the Flask application (`metrics_app/app.py`) that encapsulates the interaction and data exchange between the Evidently and [Prometheus](https://prometheus.io/docs/introduction/overview/) tools. As mentioned above, Evidently calculates drifts, based on the request and prediction result, and collects them in "monitors", which are then collected by Prometheus.
 
 **metrics_app/app.py**
+
 ``` python
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {"/metrics": prometheus_client.make_wsgi_app()})
@@ -1282,6 +1294,7 @@ def configure_service():
 ```
 
 ## PP Step 04
+
 Knowing that Prometheus collects data from various sources, I updated its configurations with the services that contain the metrics. The analyzed services are the bento prediction service, the Evidently service and the Alertmanager service.
 
 Update `config/prometheus.yml` file: 
