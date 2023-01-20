@@ -627,6 +627,25 @@ SESSION_STORE_ARGS = {"path": str(Path(__file__).parents[2] / "data")}
 
 *To implement a Continuous Integration, I write the workflows with GitHub Actions. In `.github/workflows/ci.yaml`:*
 ``` yaml
+name: model-activities-kedro
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: docker://dvcorg/cml-py3:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7.9
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('src/requirements.txt') }}
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
