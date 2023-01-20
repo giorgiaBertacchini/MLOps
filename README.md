@@ -1610,6 +1610,10 @@ services:
 ```
 *Note: in bentoml image is used {TAG}, so it run the latest ml model. This value is take from `.env` file.*
 
+``` python
+TAG=adxlqlc6v6p3rgbm
+```
+
 So, to up and start all docker images:
 ```
 docker compose up
@@ -1696,6 +1700,12 @@ The installations are execute through `Dockerfile`:
 COPY metrics_app/requirements.txt requirements.txt
 
 RUN pip3 install -r requirements.txt
+
+RUN pip3 install evidently
+
+COPY metrics_app .
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=8085"]
 ```
 
 To run streamlit app. it is necessary:
