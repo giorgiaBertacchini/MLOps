@@ -146,7 +146,7 @@ And in `.dvc/config` file have the url to remote destination, where save the dat
     remote = storage
     autostage = true
 ['remote "storage"']
-    url = gdrive://1LMUFVzJn4CNaqVbMsVGZazii4Mdxsanj
+    url = gdrive://****
 ```
 
 For save the original dataset:
