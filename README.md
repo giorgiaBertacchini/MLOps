@@ -310,7 +310,7 @@ def create_pipeline(**kwargs) -> Pipeline:
 ```
 At the end of this I obtained the processed dataset containing the useful information for building the model, also noted in Kedro data catalog.
 
-Now in `src/kedro_ml/pipelines_registry.py` you registe the pipeline:
+Now in `src/kedro_ml/pipeline_registry.py` you registe the pipeline:
 ``` python
 from kedro_ml.pipelines import data_processing as dp
 
