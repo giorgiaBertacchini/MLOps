@@ -171,7 +171,7 @@ Note: If the data to save is not changed (and also saved), the file `.dvc` is no
 
 Moving on, the first macro step of MLOps to implement is data engineering. I then created a Kedro pipeline having the functions of exploration, validation, and data wrangling in this order. 
 ```
-kedro pipeline create [pipeline_name]
+kedro pipeline create data_processing
 ```
 This generates `src/kedro_ml/pipelines/data_processing` folder with useful files and `conf/base/parameters/data_processing.yml` for its parameters.
 
@@ -1299,6 +1299,20 @@ Knowing that Prometheus collects data from various sources, I updated its config
 
 Update `config/prometheus.yml` file: 
 ``` yaml
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+      monitor: 'my-project'
+      
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+rule_files:
+  - "prometheus_rules.yml"
+      
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
@@ -1416,6 +1430,15 @@ receivers:
           {{ end }}
 ```
 
+Also, add in `config/prometheus.yml` file: 
+
+``` yaml
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets: [ 'alertmanager:9093' ]
+```
 ## PP Step 06
 
 <div align="center">
@@ -1442,11 +1465,30 @@ datasources:
 
 So the user from the Grafana interface has the dashboards already in the project but can also create his own dashboards customizing them to his needs.
 
-The dashboards in the project are in `dashboards/` folder, and they are `my_evidently.json` and `my_prometheus.json`. This folder is specified in the configuration `grafana_dashboards.yaml` file:
+The dashboards, for example, are collected in `dashboards/` folder, and such as examples are `my_evidently.json` and `my_prometheus.json`. This folder is specified in the configuration `grafana_dashboards.yaml` file:
 ``` yaml
+providers:
+  # <string> an unique provider name. Required
+  - name: 'Evidently Dashboards'
+    # <int> Org id. Default to 1
+    orgId: 1
+    # <string> name of the dashboard folder.
+    folder: ''
+    # <string> folder UID. will be automatically generated if not specified
+    folderUid: ''
+    # <string> provider type. Default to 'file'
+    type: file
+    # <bool> disable dashboard deletion
+    disableDeletion: false
+    # <int> how often Grafana will scan for changed dashboards
+    updateIntervalSeconds: 10
+    # <bool> allow updating provisioned dashboards from the UI
+    allowUiUpdates: false
     options:
       # <string, required> path to dashboard files on disk. Required when using the 'file' type
       path: /opt/grafana/dashboards
+      # <bool> use folder names from filesystem to create folders in Grafana
+      foldersFromFilesStructure: true
 ```
 
 ## PP Step 07
@@ -1558,7 +1600,41 @@ In Docker desktop appear/run these images: `prom/prometheus`, `grafana/grafana`,
 
 ### PP Parameters
 For change the parameters, there is `parameters/params.json`.
+``` json
+{
+    "file_name_request_data": "request_data.csv",
+    "file_name_training_data": "DATA.csv",
+    "file_name_request_data_clean": "request_data_clean.csv",
+    "file_name_training_data_clean": "training_data_clean.csv",
+    "numerical_features_names": [
+        "Distance (km)",
+        "Average Speed (km/h)" ,
+        "Calories Burned",
+        "Climb (m)",
+        "Average Heart rate (tpm)"
+    ],
+    "window_size": 500,
+    "monitors_name": [
+        "cat_target_drift",
+        "data_drift", 
+        "data_quality", 
+        "num_target_drift",
+        "regression_performance"
+    ]
+}
+```
+
 Instead `parameters/header_params.json` is automatically update with the header params of Develop Phase.
+``` json
+{"header":
+  ["Distance (km)",
+    "Average Speed (km/h)",
+    "Calories Burned",
+    "Climb (m)",
+    "Average Heart rate (tpm)",
+    "Quality"]
+}
+```
 
 **Ports**
 | Tool | Port |
